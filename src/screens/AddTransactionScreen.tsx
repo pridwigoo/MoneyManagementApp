@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-
-import { addTransactionStyles } from '../styles/addTransactionStyles';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   Alert,
@@ -12,136 +13,161 @@ import {
 } from 'react-native';
 
 import {
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
+  useTransactionStore,
+} from '../store/transactionStore';
 
-import { RootStackParamList } from '../navigation/AppNavigator';
+import {
+  useCategoryStore,
+} from '../store/categoryStore';
 
-import { useCategoryStore } from '../store/categoryStore';
-import { useTransactionStore } from '../store/transactionStore';
+import {
+  appStyles,
+} from '../styles/appStyles';
 
-import { appStyles } from '../styles/appStyles';
+import {
+  addTransactionStyles,
+} from '../styles/addTransactionStyles';
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  'AddTransaction'
->;
+export function AddTransactionScreen() {
+  const addTransaction =
+    useTransactionStore(
+      (state) =>
+        state.addTransaction,
+    );
 
-type TransactionFormType =
-  | 'income'
-  | 'expense';
+  const categories =
+    useCategoryStore(
+      (state) => state.categories,
+    );
 
-export function AddTransactionScreen({
-  navigation,
-}: Props) {
+  const loadCategories =
+    useCategoryStore(
+      (state) =>
+        state.loadCategories,
+    );
+
   const [type, setType] =
-    useState<TransactionFormType>('expense');
+    useState<
+      'income' | 'expense'
+    >('expense');
 
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] =
+    useState('');
+
+  const [
+    selectedCategoryId,
+    setSelectedCategoryId,
+  ] = useState<
+    number | undefined
+  >();
 
   const [description, setDescription] =
     useState('');
 
-  const [selectedCategoryId, setSelectedCategoryId] =
-    useState<number | undefined>();
-
-  const categories = useCategoryStore(
-    (state) => state.categories,
-  );
-
-  const loadCategories = useCategoryStore(
-    (state) => state.loadCategories,
-  );
-
-  const addTransaction = useTransactionStore(
-    (state) => state.addTransaction,
-  );
-
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        await loadCategories();
-      } catch (error) {
-        console.error(
-          'Failed to load categories:',
-          error,
-        );
-      }
-    };
+    const loadData =
+      async () => {
+        try {
+          await loadCategories();
+        } catch (error) {
+          console.error(
+            'Failed to load categories:',
+            error,
+          );
+        }
+      };
 
     loadData();
-  }, [loadCategories]);
+  }, [
+    loadCategories,
+  ]);
 
   const filteredCategories =
     categories.filter(
-      (category) => category.type === type,
+      (category) =>
+        category.type === type,
     );
 
   const handleTypeChange = (
-    selectedType: TransactionFormType,
+    newType:
+      | 'income'
+      | 'expense',
   ) => {
-    setType(selectedType);
+    setType(newType);
 
-    setSelectedCategoryId(undefined);
-  };
-
-  const handleSave = async () => {
-    const numericAmount = Number(
-      amount.replace(/\D/g, ''),
+    setSelectedCategoryId(
+      undefined,
     );
-
-    if (!numericAmount || numericAmount <= 0) {
-      Alert.alert(
-        'Validasi',
-        'Nominal transaksi harus lebih dari 0.',
-      );
-
-      return;
-    }
-
-    if (!selectedCategoryId) {
-      Alert.alert(
-        'Validasi',
-        'Silakan pilih kategori transaksi.',
-      );
-
-      return;
-    }
-
-    try {
-      await addTransaction({
-        type,
-        amount: numericAmount,
-        category_id: selectedCategoryId,
-        description:
-          description.trim() || undefined,
-        date: new Date().toISOString(),
-      });
-
-      Alert.alert(
-        'Berhasil',
-        'Transaksi berhasil disimpan.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.goBack();
-            },
-          },
-        ],
-      );
-    } catch (error) {
-      console.error(
-        'Failed to save transaction:',
-        error,
-      );
-
-      Alert.alert(
-        'Error',
-        'Transaksi gagal disimpan.',
-      );
-    }
   };
+
+  const handleSave =
+    async () => {
+      const numericAmount =
+        Number(
+          amount.replace(
+            /\D/g,
+            '',
+          ),
+        );
+
+      if (
+        !numericAmount ||
+        numericAmount <= 0
+      ) {
+        Alert.alert(
+          'Validasi',
+          'Nominal harus lebih dari 0.',
+        );
+
+        return;
+      }
+
+      if (!selectedCategoryId) {
+        Alert.alert(
+          'Validasi',
+          'Silakan pilih kategori.',
+        );
+
+        return;
+      }
+
+      try {
+        await addTransaction({
+          type,
+          amount: numericAmount,
+          category_id:
+            selectedCategoryId,
+          description:
+            description.trim() ||
+            undefined,
+          date:
+            new Date().toISOString(),
+        });
+
+        setAmount('');
+
+        setSelectedCategoryId(
+          undefined,
+        );
+
+        setDescription('');
+
+        Alert.alert(
+          'Berhasil',
+          'Transaksi berhasil disimpan.',
+        );
+      } catch (error) {
+        console.error(
+          'Failed to save transaction:',
+          error,
+        );
+
+        Alert.alert(
+          'Error',
+          'Transaksi gagal disimpan.',
+        );
+      }
+    };
 
   return (
     <ScrollView
@@ -150,13 +176,16 @@ export function AddTransactionScreen({
       }
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={appStyles.sectionTitle}>
-        Tambah Transaksi
-      </Text>
-
       {/* Transaction Type */}
-      <View style={appStyles.section}>
-        <Text style={appStyles.summaryLabel}>
+
+      <View
+        style={appStyles.section}
+      >
+        <Text
+          style={
+            appStyles.summaryLabel
+          }
+        >
           Jenis Transaksi
         </Text>
 
@@ -166,28 +195,50 @@ export function AddTransactionScreen({
           }
         >
           <Pressable
-            style={
-              addTransactionStyles.typeButton
-            }
+            style={[
+              addTransactionStyles.typeButton,
+              type === 'expense'
+                ? addTransactionStyles.typeButtonActive
+                : addTransactionStyles.typeButtonInactive,
+            ]}
             onPress={() =>
-              handleTypeChange('expense')
+              handleTypeChange(
+                'expense',
+              )
             }
           >
             <Text
-              style={addTransactionStyles.typeButtonText}
+              style={[
+                addTransactionStyles.typeButtonText,
+                type === 'expense'
+                  ? addTransactionStyles.typeButtonTextActive
+                  : addTransactionStyles.typeButtonTextInactive,
+              ]}
             >
               Pengeluaran
             </Text>
           </Pressable>
 
           <Pressable
-            style={addTransactionStyles.typeButton}
+            style={[
+              addTransactionStyles.typeButton,
+              type === 'income'
+                ? addTransactionStyles.typeButtonActive
+                : addTransactionStyles.typeButtonInactive,
+            ]}
             onPress={() =>
-              handleTypeChange('income')
+              handleTypeChange(
+                'income',
+              )
             }
           >
             <Text
-              style={addTransactionStyles.typeButtonText}
+              style={[
+                addTransactionStyles.typeButtonText,
+                type === 'income'
+                  ? addTransactionStyles.typeButtonTextActive
+                  : addTransactionStyles.typeButtonTextInactive,
+              ]}
             >
               Pemasukan
             </Text>
@@ -196,23 +247,39 @@ export function AddTransactionScreen({
       </View>
 
       {/* Amount */}
-      <View style={appStyles.section}>
-        <Text style={appStyles.summaryLabel}>
+
+      <View
+        style={appStyles.section}
+      >
+        <Text
+          style={
+            appStyles.summaryLabel
+          }
+        >
           Nominal
         </Text>
 
         <TextInput
           value={amount}
           onChangeText={setAmount}
-          placeholder="Contoh: 25000"
+          placeholder="Contoh: 50000"
           keyboardType="numeric"
-          style={addTransactionStyles.input}
+          style={
+            addTransactionStyles.input
+          }
         />
       </View>
 
       {/* Category */}
-      <View style={appStyles.section}>
-        <Text style={appStyles.summaryLabel}>
+
+      <View
+        style={appStyles.section}
+      >
+        <Text
+          style={
+            appStyles.summaryLabel
+          }
+        >
           Kategori
         </Text>
 
@@ -221,56 +288,90 @@ export function AddTransactionScreen({
             addTransactionStyles.categoryContainer
           }
         >
-          {filteredCategories.map(
-            (category) => (
-              <Pressable
-                key={category.id}
-                onPress={() =>
-                  setSelectedCategoryId(
-                    category.id,
-                  )
-                }
-                style={addTransactionStyles.categoryButton}
-              >
-                <Text
-                  style={{
-                    fontWeight: '600',
-                  }}
+          {filteredCategories.length ===
+          0 ? (
+            <Text
+              style={
+                appStyles.sectionDescription
+              }
+            >
+              Belum ada kategori untuk
+              jenis transaksi ini.
+            </Text>
+          ) : (
+            filteredCategories.map(
+              (category) => (
+                <Pressable
+                  key={category.id}
+                  onPress={() =>
+                    setSelectedCategoryId(
+                      category.id,
+                    )
+                  }
+                  style={[
+                    addTransactionStyles.categoryButton,
+                    selectedCategoryId ===
+                    category.id
+                      ? addTransactionStyles.categoryButtonSelected
+                      : null,
+                  ]}
                 >
-                  {category.icon}{' '}
-                  {category.name}
-                </Text>
-              </Pressable>
-            ),
+                  <Text
+                    style={
+                      addTransactionStyles.categoryText
+                    }
+                  >
+                    {category.icon}{' '}
+                    {category.name}
+                  </Text>
+                </Pressable>
+              ),
+            )
           )}
         </View>
       </View>
 
       {/* Description */}
-      <View style={appStyles.section}>
-        <Text style={appStyles.summaryLabel}>
-          Catatan
+
+      <View
+        style={appStyles.section}
+      >
+        <Text
+          style={
+            appStyles.summaryLabel
+          }
+        >
+          Keterangan
         </Text>
 
         <TextInput
           value={description}
-          onChangeText={setDescription}
+          onChangeText={
+            setDescription
+          }
           placeholder="Contoh: Makan siang"
           multiline
-          style={addTransactionStyles.descriptionInput}
+          style={
+            addTransactionStyles.descriptionInput
+          }
         />
       </View>
 
       {/* Save */}
+
       <Pressable
         style={({ pressed }) => [
           appStyles.button,
           pressed &&
-          appStyles.buttonPressed,
+            appStyles.buttonPressed,
         ]}
         onPress={handleSave}
       >
-        <Text style={appStyles.buttonText}>
+        <Text
+          style={
+            appStyles.buttonText
+          }
+        >
           Simpan Transaksi
         </Text>
       </Pressable>

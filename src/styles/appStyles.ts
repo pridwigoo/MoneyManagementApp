@@ -157,4 +157,134 @@ export const appStyles = StyleSheet.create({
     fontWeight: '700',
     color: '#DC2626',
   },
+    sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+
+  linkText: {
+    marginTop: 4,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2563EB',
+  },
+
+  budgetSummaryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+
+  budgetSpent: {
+    marginTop: 6,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+  },
+
+  budgetSummaryRight: {
+    alignItems: 'flex-end',
+  },
+
+  budgetTotal: {
+    marginTop: 4,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+  },
+
+  progressContainer: {
+    marginTop: 16,
+  },
+
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  progressLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+
+  progressPercentage: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#111827',
+  },
+
+  progressPercentageWarning: {
+    color: '#DC2626',
+  },
+
+  progressBackground: {
+    height: 10,
+    marginTop: 8,
+    borderRadius: 5,
+    backgroundColor: '#E5E7EB',
+    overflow: 'hidden',
+  },
+
+  progressBar: {
+    height: '100%',
+    borderRadius: 5,
+    backgroundColor: '#2563EB',
+  },
+
+  progressBarWarning: {
+    backgroundColor: '#DC2626',
+  },
+
+  budgetRemainingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 14,
+  },
+
+  budgetRemaining: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#16A34A',
+  },
+
+  budgetRemainingWarning: {
+    color: '#DC2626',
+  },
+
+  secondaryButton: {
+    marginTop: 14,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    backgroundColor: '#DBEAFE',
+  },
+
+  secondaryButtonText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2563EB',
+  },
+  incomeValue: {
+  color: '#16A34A',
+},
+
+expenseValue: {
+  color: '#DC2626',
+},
+
+incomeAmount: {
+  color: '#16A34A',
+},
+
+expenseAmount: {
+  color: '#DC2626',
+},
+
+transactionInfo: {
+  flex: 1,
+  paddingRight: 12,
+},
 });

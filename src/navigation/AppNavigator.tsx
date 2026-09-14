@@ -8,6 +8,7 @@ import { DashboardScreen } from '../screens/DashboardScreen';
 import { AddTransactionScreen } from '../screens/AddTransactionScreen';
 import { TransactionHistoryScreen } from '../screens/TransactionHistoryScreen';
 import { EditTransactionScreen } from '../screens/EditTransactionScreen';
+import { BudgetScreen } from '../screens/BudgetScreen';
 
 export type RootStackParamList = {
   Dashboard: undefined;
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   EditTransaction: {
     transactionId: number;
   };
+   Budget: undefined;
 };
 
 const Stack =
@@ -53,6 +55,14 @@ export function AppNavigator() {
         component={EditTransactionScreen}
         options={{
           title: 'Edit Transaksi',
+        }}
+      />
+
+      <Stack.Screen
+        name="Budget"
+        component={BudgetScreen}
+        options={{
+          title: 'Budget',
         }}
       />
     </Stack.Navigator>
